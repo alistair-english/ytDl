@@ -1,2 +1,2 @@
 # ytDl
-A youtube downloader written in python
+A youtube song downloader written in python
