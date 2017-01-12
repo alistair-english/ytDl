@@ -3,6 +3,7 @@ import pafy
 import sys
 import os
 import re
+from ffmpy import FFmpeg
 from html.parser import HTMLParser
 from subprocess import call
 
@@ -85,7 +86,8 @@ def download(vid, path):
     title = search.sub("", vid.title)
     filePath = best.download(filepath=path + title)
     print("\nComplete.\nConverting to MP3...")
-    call(["ffmpeg", "-loglevel", "warning", "-i", "{0}".format(filePath), "{0}".format(path + title + ".mp3")])
+    #call(["ffmpeg", "-loglevel", "warning", "-i", "{0}".format(filePath), "{0}".format(path + title + ".mp3")])
+    FFmpeg(inputs={"{0}".format(filePath):None}, outputs={"{0}".format(path + title + ".mp3"):None}).run()
     print("Complete.\nCleaning up...")
     os.remove(filePath)
     print("Complete.")
