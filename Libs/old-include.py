@@ -46,22 +46,37 @@ def safeInput(prompt, values, wrongMsg="Invalid Input.\n"):
 
 
 
-#=========A method to get a list of pafy objects to download from a song and artist name========
-def getSongs(song, artist):
-    print("Getting page...")
-    html = requests.get("http://www.youtube.com/results?search_query={0}+{1}+audio".format(song, artist)).text
+#======Take input and return a list of songs to download======
+def getSongs():
+    prompts = [["Song: ", "Artist: "], ["URL: "]]
+    option = safeInput("(1) Song and Artist, (2) URL: ", [1, 2]) - 1
+    #note: test url by doing a get_playlist and then catching valueErrors
+    values = {prompts[option][i].replace(": ", ""): input(prompts[option][i]) for i in range(len(prompts[option]))}
 
-    print("Parsing...")
-    parser = Parser()
-    parser.initLinks()
-    parser.feed(html)
-    parser.cleanLinks()
-    links = parser.links
-    return links
+    if(option==0):
+        print("Getting page...")
+        html = requests.get("http://www.youtube.com/results?search_query={0}+{1}+audio".format(values["Artist"], values["Song"])).text
 
-#=========A pafy object wrapper to avoid importing pafy into main program======
-def getPafy(link):
-    return pafy.new(link)
+        print("Parsing...")
+        parser = Parser()
+        parser.initLinks()
+        parser.feed(html)
+        parser.cleanLinks()
+        links = parser.links
+
+        for link in links:
+            vid = pafy.new(link)
+            if safeInput("Downloading '{0}'. Continue? (y/n): ".format(vid.title), str) in "yY":
+                return [vid]
+        #if we get here we've go no more videos
+        print("No more videos in the list... Exiting.")
+        sys.exit()
+    elif(option==1):
+        try:
+            playlist = pafy.get_playlist(values["URL"])
+            return [item['pafy'] for item in playlist['items']]
+        except ValueError:
+            return [pafy.new(values["URL"])]
 
 #======Download a pafy object to a filePath======
 def download(vid, path):

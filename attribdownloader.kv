@@ -1,0 +1,39 @@
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+
+<AttribDownloader>:
+    orientation: "vertical"
+    songTextInput: song
+    artistTextInput: artist
+    songList: songsListView
+    padding: 10
+    spacing: 10
+
+    BoxLayout:
+        size_hint_y: None
+        height: "40dp"
+
+        Label:
+            text: "Song Name"
+        TextInput:
+            id: song
+
+        Label:
+            text: "Artist Name"
+        TextInput:
+            id: artist
+
+    BoxLayout:
+        size_hint_y: None
+        height: "40dp"
+
+        Button:
+            text: "Get Songs"
+            size_hint_x: 15
+            on_press: root.getSongsFromAttrib()
+
+    ListView:
+        id: songsListView
+        adapter:
+            ListAdapter(data=[], cls=main.SongListButton)
